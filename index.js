@@ -4,10 +4,10 @@
 
 var level          = require('level-party');
 
-//open the request logs db
-var db = level('./request.db', { encoding: 'json' });
 
 function requestLogger(levelPath) {
+    //open the request logs db
+    var db = level(levelPath, { encoding: 'json' });
 
     return function(req, res) {
         var millis = new Date().getTime();
