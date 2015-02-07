@@ -31,4 +31,4 @@ RequestLogger.prototype.requests = function() {
 
 }
 
-module.exports = function() {return new RequestLogger();}
+module.exports = function(levelPath) {return new RequestLogger(levelPath);}
