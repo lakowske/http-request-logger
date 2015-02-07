@@ -3,6 +3,12 @@
  */
 
 var level          = require('level-party');
+var through        = require('through');
+
+var stringify = through(function(data) {
+    var str = JSON.stringify(data) + '\n';
+    this.queue(str);
+});
 
 function RequestLogger(levelPath) {
     //open the request logs db
@@ -26,7 +32,7 @@ RequestLogger.prototype.requests = function() {
     return function(req, res, params) {
         var dbStream = self.db.createReadStream();
         res.statusCode = 200;
-        dbStream.pipe(res);
+        dbStream.pipe(stringify).pipe(res);
     }
 
 }
