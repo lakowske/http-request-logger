@@ -10,9 +10,8 @@ var stringify = through(function(data) {
     this.queue(str);
 });
 
-function RequestLogger(levelPath) {
-    //open the request logs db
-    this.db = level(levelPath, { encoding: 'json' });
+function RequestLogger(db) {
+    this.db = db;
 }
 
 RequestLogger.prototype.request = function() {
@@ -33,6 +32,9 @@ RequestLogger.prototype.requests = function() {
         var dbStream = self.db.createReadStream();
         res.statusCode = 200;
         dbStream.pipe(stringify).pipe(res);
+        dbStream.on('end', function() {
+            console.log('donsoo');
+        })
     }
 
 }
