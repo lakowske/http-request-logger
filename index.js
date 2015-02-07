@@ -4,10 +4,12 @@
 
 var level          = require('level-party');
 
-
-function requestLogger(levelPath) {
+function RequestLogger(levelPath) {
     //open the request logs db
     var db = level(levelPath, { encoding: 'json' });
+}
+
+RequestLogger.prototype.request = function() {
 
     return function(req, res) {
         var millis = new Date().getTime();
@@ -19,16 +21,14 @@ function requestLogger(levelPath) {
 
 }
 
-function requests() {
-
-    var dbStream = db.createReadStream();
+RequestLogger.prototype.requests = function() {
 
     return function(req, res, params) {
+        var dbStream = db.createReadStream();
         res.statusCode = 200;
         dbStream.pipe(res);
     }
 
 }
 
-module.exports.requestLogger = requestLogger;
-module.exports.requests      = requests;
+module.exports = function() {return new RequestLogger();}
