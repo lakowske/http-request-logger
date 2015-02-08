@@ -2,7 +2,6 @@
  * (C) 2015 Seth Lakowske
  */
 
-var level          = require('level-party');
 var through        = require('through');
 var livestream     = require('level-live-stream');
 
@@ -46,4 +45,4 @@ RequestLogger.prototype.requests = function() {
 
 }
 
-module.exports = function(levelPath) {return new RequestLogger(levelPath);}
+module.exports = function(db) {return new RequestLogger(db);}
