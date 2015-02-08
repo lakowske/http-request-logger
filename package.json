@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/lakowske/http-request-logger",
   "dependencies": {
+    "level-live-stream": "^1.4.9",
     "through": "^2.3.6"
   },
   "devDependencies": {
