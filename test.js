@@ -49,6 +49,7 @@ test('can keep http pipe open', function(t) {
     var requests      = requestLogger.requests();
 
     var server = http.createServer(function(req, res) {
+
         res.statusCode = 200;
         var count = 4;
         var n     = 0;
@@ -63,8 +64,6 @@ test('can keep http pipe open', function(t) {
             }
         }, rate);
 
-
-        //requests(req, res);
     }).listen(3322);
 
     var options = {
