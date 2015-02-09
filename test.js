@@ -15,7 +15,7 @@ test('can pipe to capture', function(t) {
     //open the request logs db
     var db = level('test.db', { encoding: 'json' });
 
-    db.put('apple2', 'pie', function(err) {
+    db.put('apple', 'pie', function(err) {
         var requestLogger = require('./')(db);
         var requests      = requestLogger.requests();
         var result = '';
@@ -23,7 +23,7 @@ test('can pipe to capture', function(t) {
         var capture = through(function(data) {
             result += data;
             this.queue(data);
-            t.equal(result, '{"key":"apple2","value":"pie"}\n', 'should be a single entry');
+            t.equal(result, '{"key":"apple","value":"pie"}\n', 'should be a single entry');
 
             db.close()
             rimraf(path.join(__dirname, 'test.db'), function(er) {
@@ -55,7 +55,7 @@ test('can keep http pipe open', function(t) {
         var n     = 0;
         var rate  = 50; // rate / 1000 = times per second
         var timerId = setInterval(function() {
-            res.write('Hello Friend\n');
+            res.write('Hello Friend. You\'re wanted for the cause.\n');
             n += 1;
             if (n >= count) {
                 res.write('Goodbye Friend\n');
