@@ -7,6 +7,7 @@ var http = require('http');
 var JSONStream = require('JSONStream');
 var through    = require('through');
 var fs         = require('fs');
+var useragent  = require('useragent');
 
 function requestToBayes(request) {
     var bayes = {};
@@ -29,8 +30,12 @@ function getRequests(url) {
         res.pipe(parseify);
         res.pipe(output);
          parseify.on('data', function(dbrequest) {
-            var request = JSON.parse(dbrequest.value);
-            console.log(request['user-agent']);
+             var request = JSON.parse(dbrequest.value);
+             var ua      = request['user-agent'];
+             if (ua) {
+                 var agent =useragent.parse(ua);
+                 console.log(agent.os.family, agent.family);
+             }
         })
     });
 

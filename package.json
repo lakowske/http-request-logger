@@ -33,6 +33,7 @@
     "level": "^0.18.0",
     "level-live-stream": "^1.4.9",
     "rimraf": "^2.2.8",
-    "tape": "^3.5.0"
+    "tape": "^3.5.0",
+    "useragent": "^2.1.5"
   }
 }
