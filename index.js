@@ -21,6 +21,7 @@ RequestLogger.prototype.request = function() {
         var reqDescription = req.headers;
         reqDescription.url = req.url;
         reqDescription.time = millis;
+        reqDescription.ip   = req.connection.remoteAddress;
         self.db.put(millis, JSON.stringify(reqDescription));
 
     };
