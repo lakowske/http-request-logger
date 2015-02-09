@@ -20,13 +20,14 @@ function getRequests(url) {
     var parseify = JSONStream.parse();
 
     var options = {
-        host : 'sethlakowske.com',
-        port : 80,
+        host : 'localhost',
+        port : 5555,
         path : '/requests'
     }
     var output = fs.createWriteStream('output.json')
     var req = http.request(options, function(res) {
         res.pipe(parseify);
+        res.pipe(output);
          parseify.on('data', function(dbrequest) {
             var request = JSON.parse(dbrequest.value);
             console.log(request['user-agent']);
