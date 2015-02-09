@@ -6,6 +6,7 @@ var test = require('tape');
 var http = require('http');
 var JSONStream = require('JSONStream');
 var through    = require('through');
+var fs         = require('fs');
 
 function requestToBayes(request) {
     var bayes = {};
@@ -16,27 +17,20 @@ function requestToBayes(request) {
 function getRequests(url) {
     var toString  = through(function(data) {this.queue(data.toString())});
 
-    var stringify = JSONStream.stringify(false);
+    var parseify = JSONStream.parse();
+
     var options = {
         host : 'sethlakowske.com',
         port : 80,
         path : '/requests'
     }
-
+    var output = fs.createWriteStream('output.json')
     var req = http.request(options, function(res) {
-        res.pipe(toString).pipe(stringify)
-        var count = 0;
-        stringify.on('data', function(requestData) {
-            var request = JSON.parse(requestData);
-            var r       = JSON.parse(request);
-            //console.log(request);
-            console.log(typeof r);
+        res.pipe(parseify);
+         parseify.on('data', function(dbrequest) {
+            var request = JSON.parse(dbrequest.value);
+            console.log(request['user-agent']);
         })
-
-        stringify.on('end', function() {
-            console.log('all done');
-        })
-
     });
 
     req.on('error', function(e) {
