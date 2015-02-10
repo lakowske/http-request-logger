@@ -17,10 +17,12 @@ RequestLogger.prototype.request = function() {
     var self = this;
     return function(req, res) {
 
-        var millis = new Date().getTime();
-        var reqDescription = req.headers;
-        reqDescription.url = req.url;
-        reqDescription.time = millis;
+        var millis                   = new Date().getTime();
+        var reqDescription           = req.headers;
+        reqDescription.url           = req.url;
+        reqDescription.time          = millis;
+        reqDescription.remoteAddress = req.connection.remoteAddress;
+
         self.db.put(millis, JSON.stringify(reqDescription));
 
     };

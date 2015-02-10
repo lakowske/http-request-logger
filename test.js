@@ -55,7 +55,7 @@ test('can keep http pipe open', function(t) {
         var n     = 0;
         var rate  = 50; // rate / 1000 = times per second
         var timerId = setInterval(function() {
-            res.write('Hello Friend. You\'re wanted for the cause.\n');
+            res.write('Hello Friend\n');
             n += 1;
             if (n >= count) {
                 res.write('Goodbye Friend\n');
