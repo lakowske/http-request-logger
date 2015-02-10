@@ -1,7 +1,7 @@
 {
   "name": "http-request-logger",
   "version": "0.0.1",
-  "description": "Logs requests to a level db.  request-logger can also streams the requests over http.",
+  "description": "Log http requests to a level db and live stream the request descriptions over http.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
