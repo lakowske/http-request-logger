@@ -36,7 +36,7 @@ RequestLogger.prototype.requests = function() {
 
         var dbStream = livestream(self.db);
         res.statusCode = 200;
-
+        res.setHeader('content-type', 'text/plain');
         dbStream.on('data', function(data) {
             res.write(JSON.stringify(data) + '\n');
         });
