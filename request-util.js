@@ -21,8 +21,8 @@ function getRequests(url) {
     var parseify = JSONStream.parse();
 
     var options = {
-        host : 'localhost',
-        port : 5555,
+        host : 'sethlakowske.com',
+        port : 80,
         path : '/requests'
     }
     var output = fs.createWriteStream('output.json')

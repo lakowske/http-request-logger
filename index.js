@@ -6,12 +6,30 @@ var through        = require('through');
 var livestream     = require('level-live-stream');
 
 /*
- * Can store requests to a level db and serve requests.
+ * store and pipe requests to a level db.
+ * serve requests from a level db.
  */
 function RequestLogger(db) {
     this.db = db;
 }
 
+/*
+ * push a level encoded request to the database
+ */
+RequestLogger.prototype.push    = function() {
+
+    var self = this;
+
+    return through(function(levelRequest) {
+        self.db.put(levelRequest.key, levelRequest.value);
+        this.queue(levelRequest);
+    }
+
+}
+
+/*
+ * log a request to the level db.
+ */
 RequestLogger.prototype.request = function() {
 
     var self = this;
