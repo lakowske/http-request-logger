@@ -23,7 +23,7 @@ RequestLogger.prototype.push    = function() {
     return through(function(levelRequest) {
         self.db.put(levelRequest.key, levelRequest.value);
         this.queue(levelRequest);
-    }
+    })
 
 }
 
