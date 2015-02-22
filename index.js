@@ -51,7 +51,6 @@ RequestLogger.prototype.requests = function() {
 
     var self = this;
     return function(req, res, params) {
-
         var dbStream = livestream(self.db);
         res.statusCode = 200;
         res.setHeader('content-type', 'text/plain');
@@ -63,6 +62,22 @@ RequestLogger.prototype.requests = function() {
 
     }
 
+}
+
+RequestLogger.prototype.classified = function() {
+
+    var self = this;
+    var parseify = new JSONStream.parse();
+
+    return function(req, res, params) {
+        req.pipe(parseify);
+
+        parseify.on('data', function(dbrequest) {
+            var millis = new Date().getTime();
+            self.db.put(millis, dbrequest);
+        });
+
+    }
 }
 
 module.exports = function(db) {return new RequestLogger(db);}
