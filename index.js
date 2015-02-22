@@ -4,6 +4,7 @@
 
 var through        = require('through');
 var livestream     = require('level-live-stream');
+var JSONStream     = require('JSONStream');
 
 /*
  * store and pipe requests to a level db.
