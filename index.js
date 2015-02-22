@@ -71,6 +71,7 @@ RequestLogger.prototype.classified = function() {
     var parseify = new JSONStream.parse();
 
     return function(req, res, params) {
+        req.pipe(process.stdout);
         req.pipe(parseify);
 
         parseify.on('data', function(dbrequest) {
