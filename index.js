@@ -52,15 +52,24 @@ RequestLogger.prototype.requests = function() {
 
     var self = this;
     return function(req, res, params) {
-        var dbStream = livestream(self.db);
-        res.statusCode = 200;
-        res.setHeader('content-type', 'text/plain');
-        dbStream.on('data', function(data) {
-            res.write(JSON.stringify(data) + '\n');
-        });
+        if (req.method === 'GET') {
+            var dbStream = livestream(self.db);
+            res.statusCode = 200;
+            res.setHeader('content-type', 'text/plain');
+            dbStream.on('data', function(data) {
+                res.write(JSON.stringify(data) + '\n');
+            });
 
-        dbStream.on('end', function() { console.log('donsoo') });
+            dbStream.on('end', function() { console.log('donsoo') });
+        } else if (req.method === 'PUT') {
+            req.pipe(process.stdout);
+            req.pipe(parseify);
 
+            parseify.on('data', function(dbrequest) {
+                var millis = new Date().getTime();
+                self.db.put(millis, dbrequest);
+            });
+        }
     }
 
 }
