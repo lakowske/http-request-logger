@@ -38,7 +38,7 @@ test('can pipe to capture', function(t) {
             console.dir(db);
         });
 
-        requests({headers:{}}, capture);
+        requests({headers:{}, method:'GET'}, capture);
     });
 
 });

@@ -4,6 +4,7 @@
 
 var through        = require('through');
 var livestream     = require('level-live-stream');
+var JSONStream     = require('JSONStream');
 
 /*
  * store and pipe requests to a level db.
@@ -51,21 +52,48 @@ RequestLogger.prototype.requests = function() {
 
     var self = this;
     return function(req, res, params) {
-        //allow the requestor to set options
-        var options = req.headers;
-        if (options.tail === 'false') {options.tail = false}
 
-        var dbStream = livestream(self.db, options);
-        res.statusCode = 200;
+        if (req.method === 'GET') {
+            //allow the requestor to set options
+            var options = req.headers;
+            if (options.tail === 'false') {options.tail = false}
 
-        dbStream.on('data', function(data) {
-            res.write(JSON.stringify(data) + '\n');
-        });
+            var dbStream = livestream(self.db, options);
+            res.statusCode = 200;
 
-        dbStream.on('end', function() { console.log('donsoo') });
+            dbStream.on('data', function(data) {
+                res.write(JSON.stringify(data) + '\n');
+            });
 
+            dbStream.on('end', function() { console.log('donsoo') });
+        } else if (req.method === 'PUT') {
+            req.pipe(process.stdout);
+            req.pipe(parseify);
+
+            parseify.on('data', function(dbrequest) {
+                var millis = new Date().getTime();
+                self.db.put(millis, dbrequest);
+            });
+        }
     }
 
+}
+
+RequestLogger.prototype.classified = function() {
+
+    var self = this;
+    var parseify = new JSONStream.parse();
+
+    return function(req, res, params) {
+        req.pipe(process.stdout);
+        req.pipe(parseify);
+
+        parseify.on('data', function(dbrequest) {
+            var millis = new Date().getTime();
+            self.db.put(millis, dbrequest);
+        });
+
+    }
 }
 
 module.exports = function(db) {return new RequestLogger(db);}
