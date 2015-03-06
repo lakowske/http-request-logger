@@ -25,23 +25,69 @@ test('can pipe to capture', function(t) {
             this.queue(data);
             t.equal(result, '{"key":"apple","value":"pie"}\n', 'should be a single entry');
 
-            db.close()
+            db.close();
             rimraf(path.join(__dirname, 'test.db'), function(er) {
                 if (er) throw er;
-            })
+            });
 
             t.end();
-        })
+        });
 
         capture.on('end', function() {
             console.log(result);
             console.dir(db);
         });
 
-        requests(null, capture);
+        requests({headers:{}}, capture);
     });
 
-})
+});
+
+test('can start mid-stream', function(t) {
+    var port = 12345;
+    var db = level('test-midstream.db', {encoding: 'json'});
+
+    var logs = [{type : 'put', key : "014", value : 'seth'},
+                {type : 'put', key : "023", value : 'john'},
+                {type : 'put', key : "015", value : 'james'}];
+
+    db.batch(logs, function(err) {
+        if (err) { console.log('oops batch put failed'); }
+
+        var requestLogger = require('./')(db);
+        var server = http.createServer(requestLogger.requests());
+        server.listen(port);
+
+        var options = {
+            host : 'localhost',
+            port : port,
+            path : '/requests',
+            headers : { gt : '015' }
+        };
+
+        var result = '';
+        var req = http.request(options, function(res) {
+            res.setEncoding('utf8');
+            res.on('data', function (chunk) {
+                result += chunk;
+            });
+        });
+        req.setTimeout(500, function() {
+            db.close();
+            req.abort();
+            server.close();
+
+            console.log(result);
+            rimraf(path.join(__dirname, 'test-midstream.db'), function(er) {
+                if (er) throw er;
+                t.end();
+            });
+        })
+        req.end();
+
+    });
+
+});
 
 test('can keep http pipe open', function(t) {
     var db = level('test2.db', { encoding: 'json' });
@@ -71,7 +117,7 @@ test('can keep http pipe open', function(t) {
         port : 3322,
         path : '/test',
         keepAlive : true
-    }
+    };
 
     var output = [
         'Hello Friend',
@@ -95,10 +141,10 @@ test('can keep http pipe open', function(t) {
 
             rimraf(path.join(__dirname, 'test2.db'), function(er) {
                 if (er) throw er;
-            })
+            });
 
             t.end();
-        })
+        });
     });
 
     req.on('error', function(e) {
@@ -106,7 +152,7 @@ test('can keep http pipe open', function(t) {
     });
 
     req.end();
-})
+});
 
 test('can live stream db via http', function(t) {
     var db = level('test3.db', { encoding: 'json' }, function(err, db) {
@@ -135,7 +181,7 @@ test('can live stream db via http', function(t) {
 
             dbstream.on('end', function() {
                 res.end();
-            })
+            });
 
         }).listen(3322);
 
@@ -144,9 +190,9 @@ test('can live stream db via http', function(t) {
             port : 3322,
             path : '/test',
             keepAlive : true
-        }
+        };
 
-        var result = ''
+        var result = '';
         var req = http.request(options, function(res) {
             res.setEncoding('utf8');
             res.on('data', function (chunk) {
@@ -169,10 +215,10 @@ test('can live stream db via http', function(t) {
                 db.close();
                 rimraf(path.join(__dirname, 'test3.db'), function(er) {
                     if (er) throw er;
-                })
+                });
 
                 t.end();
-            })
+            });
         });
 
         req.on('error', function(e) {
@@ -183,4 +229,4 @@ test('can live stream db via http', function(t) {
 
     });
 
-})
+});

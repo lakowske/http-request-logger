@@ -51,8 +51,11 @@ RequestLogger.prototype.requests = function() {
 
     var self = this;
     return function(req, res, params) {
+        //allow the requestor to set options
+        var options = req.headers;
+        if (options.tail === 'false') {options.tail = false}
 
-        var dbStream = livestream(self.db);
+        var dbStream = livestream(self.db, options);
         res.statusCode = 200;
 
         dbStream.on('data', function(data) {
