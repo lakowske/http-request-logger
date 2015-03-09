@@ -45,7 +45,8 @@ test('can pipe to capture', function(t) {
 
 test('can start mid-stream', function(t) {
     var port = 12345;
-    var db = level('test-midstream.db', {encoding: 'json'});
+    var dbname = 'test-midstream.db';
+    var db = level(dbname, {encoding: 'json'});
 
     var logs = [{type : 'put', key : "014", value : 'seth'},
                 {type : 'put', key : "023", value : 'john'},
@@ -78,7 +79,7 @@ test('can start mid-stream', function(t) {
             server.close();
 
             console.log(result);
-            rimraf(path.join(__dirname, 'test-midstream.db'), function(er) {
+            rimraf(path.join(__dirname, dbname), function(er) {
                 if (er) throw er;
                 t.end();
             });
