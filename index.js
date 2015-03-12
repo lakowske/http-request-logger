@@ -51,6 +51,8 @@ RequestLogger.prototype.request = function() {
 RequestLogger.prototype.requests = function() {
 
     var self = this;
+    var parseify = new JSONStream.parse();
+
     return function(req, res, params) {
 
         if (req.method === 'GET') {
