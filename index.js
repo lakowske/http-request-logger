@@ -76,7 +76,7 @@ RequestLogger.prototype.requests = function() {
             parseify.on('data', function(dbrequest) {
                 var millis = new Date().getTime();
                 console.log(typeof dbrequest, dbrequest);
-                self.db.put(millis, dbrequest);
+                self.db.put(millis, dbrequest.value);
                 res.write('request received');
                 res.end();
             });
