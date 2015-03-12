@@ -70,7 +70,6 @@ RequestLogger.prototype.requests = function() {
             dbStream.on('end', function() { console.log('donsoo') });
         } else if (req.method === 'POST') {
             console.log('Adding request via POST');
-            req.pipe(process.stdout);
             req.pipe(parseify);
 
             parseify.on('data', function(dbrequest) {
