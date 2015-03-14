@@ -31,9 +31,11 @@
     "through": "^2.3.6"
   },
   "devDependencies": {
-    "level": "^0.18.0",
     "JSONStream": "^0.10.0",
+    "http-methods": "^1.0.0",
+    "level": "^0.18.0",
     "rimraf": "^2.2.8",
+    "routes": "^2.0.0",
     "tape": "^3.5.0",
     "useragent": "^2.1.5"
   }

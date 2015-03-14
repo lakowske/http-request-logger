@@ -53,33 +53,21 @@ RequestLogger.prototype.requests = function() {
     var self = this;
     var parseify = new JSONStream.parse();
 
-    return function(req, res, params) {
+    return function(req, res, params, cb) {
 
-        if (req.method === 'GET') {
-            //allow the requestor to set options
-            var options = req.headers;
-            if (options.tail === 'false') {options.tail = false}
+        //allow the requestor to set options
+        var options = req.headers;
+        if (options.tail === 'false') {options.tail = false}
 
-            var dbStream = livestream(self.db, options);
-            res.statusCode = 200;
+        var dbStream = livestream(self.db, options);
+        res.statusCode = 200;
 
-            dbStream.on('data', function(data) {
-                res.write(JSON.stringify(data) + '\n');
-            });
+        dbStream.on('data', function(data) {
+            res.write(JSON.stringify(data) + '\n');
+        });
 
-            dbStream.on('end', function() { console.log('donsoo') });
-        } else if (req.method === 'POST') {
-            console.log('Adding request via POST');
-            req.pipe(parseify);
+        dbStream.on('end', function() { console.log('donsoo') });
 
-            parseify.on('data', function(dbrequest) {
-                var millis = new Date().getTime();
-                console.log(typeof dbrequest, typeof dbrequest.value, dbrequest.value);
-                self.db.put(millis, dbrequest.value);
-                res.write('request received');
-                res.end();
-            });
-        }
     }
 
 }
@@ -87,17 +75,30 @@ RequestLogger.prototype.requests = function() {
 RequestLogger.prototype.classified = function() {
 
     var self = this;
-    var parseify = new JSONStream.parse();
 
     return function(req, res, params) {
-        req.pipe(process.stdout);
+        var parseify = new JSONStream.parse();
         req.pipe(parseify);
 
         parseify.on('data', function(dbrequest) {
-            var millis = new Date().getTime();
-            self.db.put(millis, dbrequest);
-        });
+            var key    = dbrequest.key;
 
+            if (!dbrequest.key) {
+                key = new Date().getTime();
+            }
+
+            var value  = dbrequest.value;
+
+            self.db.put(key, value, {}, function(error) {
+                if (error) {
+                    res.write(JSON.stringify({result:'error', key: key, msg: error}));
+                } else {
+                    res.write(JSON.stringify({result:'success', key: key}));
+                }
+                res.end();
+            });
+
+        });
     }
 }
 
