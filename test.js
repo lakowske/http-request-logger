@@ -23,7 +23,7 @@ test('can pipe to capture', function(t) {
         var capture = through(function(data) {
             result += data;
             this.queue(data);
-            t.equal(result, '{"key":"apple","value":"pie"}\n', 'should be a single entry');
+            t.equal(result, '{"key":"apple","value":"pie"}', 'should be a single entry');
 
             db.close();
             rimraf(path.join(__dirname, 'test.db'), function(er) {
