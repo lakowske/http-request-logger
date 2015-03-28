@@ -4,7 +4,7 @@
   "description": "Log http requests to a level db and live stream the request descriptions over http.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test.js"
   },
   "repository": {
     "type": "git",
@@ -27,6 +27,7 @@
   "dependencies": {
     "JSONStream": "^0.10.0",
     "level-live-stream": "^1.4.9",
+    "level-over-http": "0.0.1",
     "level-sublevel": "^6.4.5",
     "through": "^2.3.6"
   },
