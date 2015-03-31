@@ -1,6 +1,6 @@
 {
   "name": "http-request-logger",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Log http requests to a level db and live stream the request descriptions over http.",
   "main": "index.js",
   "scripts": {
