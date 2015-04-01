@@ -3,6 +3,7 @@
  */
 
 var levelHttp      = require('level-over-http');
+var timestampFn    = require('lexicographic-timestamp').lexicographicTimestamp;
 
 /*
  * store and pipe requests to a level db.
@@ -26,16 +27,16 @@ RequestLogger.prototype.push    = function() {
  */
 RequestLogger.prototype.request = function() {
 
-    var self = this;
+    var dbify = levelHttp.push(this.db);
+
     return function(req, res) {
 
-        var millis                   = new Date().getTime();
         var reqDescription           = req.headers;
         reqDescription.url           = req.url;
         reqDescription.time          = millis;
         reqDescription.remoteAddress = req.connection.remoteAddress;
 
-        self.db.put(millis, JSON.stringify(reqDescription));
+        dbify.write(reqDescription);
 
     };
 
