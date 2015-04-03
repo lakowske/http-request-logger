@@ -4,6 +4,7 @@
 
 var levelHttp      = require('level-over-http');
 var timestampFn    = require('lexicographic-timestamp').lexicographicTimestamp;
+var JSONStream     = require('JSONStream');
 
 /*
  * store and pipe requests to a level db.
@@ -27,17 +28,21 @@ RequestLogger.prototype.push    = function() {
  */
 RequestLogger.prototype.request = function() {
 
-    var dbify = levelHttp.push(this.db);
+    var dbify       = levelHttp.push(this.db);
+    var timestamper = levelHttp.timestampStream();
+    var stringify   = JSONStream.stringify(false);
+
+    timestamper.pipe(dbify).pipe(stringify).pipe(process.stdout);
 
     return function(req, res) {
-
+        var millis                   = Date.now();
         var reqDescription           = req.headers;
         reqDescription.url           = req.url;
         reqDescription.time          = millis;
         reqDescription.remoteAddress = req.connection.remoteAddress;
+        reqDescription.method        = req.method;
 
-        dbify.write(reqDescription);
-
+        timestamper.write({value:JSON.stringify(reqDescription)});
     };
 
 }
