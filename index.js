@@ -30,9 +30,8 @@ RequestLogger.prototype.request = function() {
 
     var dbify       = levelHttp.push(this.db);
     var timestamper = levelHttp.timestampStream();
-    var stringify   = JSONStream.stringify(false);
 
-    timestamper.pipe(dbify).pipe(stringify).pipe(process.stdout);
+    timestamper.pipe(dbify);
 
     return function(req, res) {
         var millis                   = Date.now();
